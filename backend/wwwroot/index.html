@@ -57,8 +57,8 @@
         <h3>💰 Apply in 2 minutes</h3>
         <form id="leadForm" class="mform">
           <div class="mfg"><label>Full Name</label><input type="text" name="name" required /></div>
-          <div class="mfg"><label>Email</label><input type="email" name="email" required /></div>
-          <div class="mfg"><label>Phone</label><input type="tel" name="phone" required maxlength="10" /></div>
+          <div class="mfg"><label>Email</label><input type="email" name="email" required /><small id="emailError" class="error-message"></small></div>
+          <div class="mfg"><label>Phone</label><input type="tel" name="phone" required maxlength="10" /><small id="phoneError" class="error-message"></small></div>
           <div class="mfg"><label>Employment Type</label><select name="employmentType" required><option value="">Select type</option><option>Salaried</option><option>Self-Employed</option></select></div>
           <div class="mfg"><label>Monthly Income</label><select name="monthlyIncome" required><option value="">Select income</option><option>₹50,000 – ₹1,00,000</option><option>₹1,00,000+</option></select></div>
           <div class="mfg"><label>Loan Amount</label><input type="number" name="loanAmount" min="50000" max="1500000" step="5000" value="150000" required /></div>
