@@ -74,50 +74,75 @@ public sealed class SqlLeadRepository : ILeadRepository
         }
     }
 
-    public async Task<IReadOnlyList<LeadRecord>> GetAllAsync(string? name = null, string? phone = null, DateTime? fromDate = null, DateTime? toDate = null)
+    public async Task<IReadOnlyList<LeadRecord>> GetAllAsync(
+    string? name = null,
+    string? phone = null,
+    DateTime? fromDate = null,
+    DateTime? toDate = null)
     {
         try
         {
-            await EnsureSchemaAsync();
             await using var connection = new NpgsqlConnection(_connectionString);
             await connection.OpenAsync();
+
             await using var command = connection.CreateCommand();
-            command.CommandText = @"
-            SELECT Id, Name, Email, Phone, EmploymentType, MonthlyIncome, LoanAmount, City, Source, CreatedDate, Status
-            FROM leads
-            WHERE (@Name IS NULL OR Name ILIKE '%' || @Name || '%')
-              AND (@Phone IS NULL OR Phone ILIKE '%' || @Phone || '%')
-              AND (@FromDate IS NULL OR CreatedDate >= @FromDate)
-              AND (@ToDate IS NULL OR CreatedDate <= @ToDate)
-            ORDER BY CreatedDate DESC;";
-            command.Parameters.AddWithValue("@Name", name ?? (object)DBNull.Value);
-            command.Parameters.AddWithValue("@Phone", phone ?? (object)DBNull.Value);
-            command.Parameters.AddWithValue("@FromDate", fromDate ?? (object)DBNull.Value);
-            command.Parameters.AddWithValue("@ToDate", toDate ?? (object)DBNull.Value);
+
+            var sql = @"
+                SELECT Id, Name, Email, Phone, EmploymentType,
+                    MonthlyIncome, LoanAmount, City, Source,
+                    CreatedDate, Status
+                FROM leads
+                WHERE 1=1";
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                sql += " AND Name ILIKE @Name";
+                command.Parameters.AddWithValue("@Name", $"%{name}%");
+            }
+
+            if (!string.IsNullOrWhiteSpace(phone))
+            {
+                sql += " AND Phone ILIKE @Phone";
+                command.Parameters.AddWithValue("@Phone", $"%{phone}%");
+            }
+
+            if (fromDate.HasValue)
+            {
+                sql += " AND CreatedDate >= @FromDate";
+                command.Parameters.AddWithValue("@FromDate", fromDate.Value);
+            }
+
+            if (toDate.HasValue)
+            {
+                sql += " AND CreatedDate <= @ToDate";
+                command.Parameters.AddWithValue("@ToDate", toDate.Value);
+            }
+
+            sql += " ORDER BY CreatedDate DESC";
+
+            command.CommandText = sql;
 
             await using var reader = await command.ExecuteReaderAsync();
+
             var result = new List<LeadRecord>();
+
             while (await reader.ReadAsync())
             {
-                _logger.LogInformation("Lead Found: {Name}", reader.GetString(1));
-
                 result.Add(new LeadRecord
                 {
                     Id = reader.GetGuid(0),
                     Name = reader.GetString(1),
-                    Email = reader.GetString(2),
+                    Email = reader.IsDBNull(2) ? "" : reader.GetString(2),
                     Phone = reader.GetString(3),
-                    EmploymentType = reader.GetString(4),
-                    MonthlyIncome = reader.GetString(5),
+                    EmploymentType = reader.IsDBNull(4) ? "" : reader.GetString(4),
+                    MonthlyIncome = reader.IsDBNull(5) ? "" : reader.GetString(5),
                     LoanAmount = reader.GetFloat(6),
-                    City = reader.GetString(7),
-                    Source = reader.GetString(8),
+                    City = reader.IsDBNull(7) ? "" : reader.GetString(7),
+                    Source = reader.IsDBNull(8) ? "" : reader.GetString(8),
                     CreatedDate = reader.GetDateTime(9),
-                    Status = reader.GetString(10)
+                    Status = reader.IsDBNull(10) ? "" : reader.GetString(10)
                 });
             }
-
-            _logger.LogInformation("Total Leads: {Count}", result.Count);
 
             return result;
         }
