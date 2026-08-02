@@ -1,5 +1,5 @@
 const API_BASE_URL = '';
-const fakeCredentials = { username: 'admin', password: 'admin123' };
+const fakeCredentials = { username: 'admin', password: 'f47ac10b-58cc-4372-a567-0e02b2c3d479' };
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Admin dashboard initialized');
