@@ -15,15 +15,25 @@ public sealed class LeadsController : ControllerBase
         _leadIngestionService = leadIngestionService;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] LeadSubmissionRequest request)
+[HttpPost]
+public async Task<IActionResult> Create([FromBody] LeadSubmissionRequest request)
+{
+    try
     {
         var success = await _leadIngestionService.SubmitLeadAsync(request);
-        if (!success)
-        {
-            return BadRequest(new { message = "Please provide the required details." });
-        }
 
-        return Ok(new { success = true, message = "Lead accepted and saved successfully." });
+        return Ok(new
+        {
+            success,
+            request
+        });
     }
-}
+    catch (Exception ex)
+    {
+        return StatusCode(500, new
+        {
+            ex.Message,
+            ex.StackTrace
+        });
+    }
+}}
