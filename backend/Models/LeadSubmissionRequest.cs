@@ -6,7 +6,7 @@ public sealed class LeadSubmissionRequest
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public string EmploymentType { get; set; } = string.Empty;
-    public float MonthlyIncome { get; set; } = 0;
+    public string MonthlyIncome { get; set; } = string.Empty;
     public float LoanAmount { get; set; } = 0;
     public string City { get; set; } = string.Empty;
     public string Source { get; set; } = string.Empty;

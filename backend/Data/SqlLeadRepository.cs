@@ -87,7 +87,7 @@ public sealed class SqlLeadRepository : ILeadRepository
                     Email = reader.GetString(2),
                     Phone = reader.GetString(3),
                     EmploymentType = reader.GetString(4),
-                    MonthlyIncome = reader.GetFloat(5),
+                    MonthlyIncome = reader.GetString(5),
                     LoanAmount = reader.GetFloat(6),
                     City = reader.GetString(7),
                     Source = reader.GetString(8),

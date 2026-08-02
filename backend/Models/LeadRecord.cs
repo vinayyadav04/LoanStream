@@ -12,7 +12,7 @@ public sealed class LeadRecord
 
     public string EmploymentType { get; set; } = string.Empty;
 
-    public float MonthlyIncome { get; set; }    // float4
+    public string MonthlyIncome { get; set; } =string.Empty;
 
     public float LoanAmount { get; set; }       // float4
 
