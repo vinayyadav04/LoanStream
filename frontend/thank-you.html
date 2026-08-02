@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Thank you</title>
+    <style>
+      body { margin:0; font-family: Arial, Helvetica, sans-serif; background:#f3f7fb; color:#0f172a; display:grid; place-items:center; min-height:100vh }
+      .card { background:white; padding:2rem; border-radius:12px; box-shadow:0 8px 24px rgba(12,16,22,0.08); max-width:680px; text-align:center }
+      h1{ color:#0f766e; margin-bottom:.5rem }
+      p{ color:#334155 }
+      a{ display:inline-block; margin-top:1rem; background:#0f766e; color:white; padding:.6rem 1rem; border-radius:999px; text-decoration:none }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1 id="tyTitle">Thank you</h1>
+      <p id="tyMessage">We received your submission.</p>
+      <a href="/">Back to home</a>
+    </div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const source = (params.get('source') || '').toLowerCase();
+      const titleEl = document.getElementById('tyTitle');
+      const msgEl = document.getElementById('tyMessage');
+      if (source === 'contact') {
+        titleEl.textContent = 'Message received';
+        msgEl.textContent = 'Thank you! Your message has been received and we will get back to you shortly.';
+      } else {
+        titleEl.textContent = 'Application received';
+        msgEl.textContent = 'Thank you! Your application has been received and will be processed shortly.';
+      }
+    </script>
+  </body>
+</html>

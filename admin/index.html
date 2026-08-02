@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LoanStream Admin</title>
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <div class="status-banner" id="adminStatus">Loading admin dashboard...</div>
+    <div class="login-shell" id="loginView">
+      <form class="login-card" id="loginForm">
+        <h1>Admin Login</h1>
+        <label>
+          Username
+          <input type="text" id="username" required />
+        </label>
+        <label>
+          Password
+          <input type="password" id="password" required />
+        </label>
+        <div class="login-error" id="loginError" hidden></div>
+        <button class="btn" type="submit">Login</button>
+      </form>
+    </div>
+
+    <div class="dashboard-shell" id="dashboardView" hidden>
+      <header class="dashboard-header">
+        <h1>Lead Dashboard</h1>
+        <button class="btn btn--secondary" id="logoutBtn">Logout</button>
+      </header>
+
+      <section class="toolbar">
+        <input type="text" id="searchName" placeholder="Search by name" />
+        <input type="text" id="searchPhone" placeholder="Search by phone" />
+        <input type="date" id="fromDate" />
+        <input type="date" id="toDate" />
+        <button class="btn" id="filterBtn">Filter</button>
+        <a class="btn btn--secondary" id="excelLink" href="/api/admin/export/excel">Export Excel</a>
+        <a class="btn btn--secondary" id="csvLink" href="/api/admin/export/csv">Export CSV</a>
+      </section>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>City</th>
+            <th>Income</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody id="leadRows"></tbody>
+      </table>
+    </div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
