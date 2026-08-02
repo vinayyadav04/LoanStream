@@ -84,7 +84,7 @@ public sealed class SqlLeadRepository : ILeadRepository
             await using var command = connection.CreateCommand();
             command.CommandText = @"
             SELECT Id, Name, Email, Phone, EmploymentType, MonthlyIncome, LoanAmount, City, Source, CreatedDate, Status
-            FROM Leads
+            FROM leads
             WHERE (@Name IS NULL OR Name ILIKE '%' || @Name || '%')
               AND (@Phone IS NULL OR Phone ILIKE '%' || @Phone || '%')
               AND (@FromDate IS NULL OR CreatedDate >= @FromDate)
