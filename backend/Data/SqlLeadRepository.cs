@@ -99,6 +99,8 @@ public sealed class SqlLeadRepository : ILeadRepository
             var result = new List<LeadRecord>();
             while (await reader.ReadAsync())
             {
+                _logger.LogInformation("Lead Found: {Name}", reader.GetString(1));
+
                 result.Add(new LeadRecord
                 {
                     Id = reader.GetGuid(0),
@@ -115,6 +117,8 @@ public sealed class SqlLeadRepository : ILeadRepository
                 });
             }
 
+            _logger.LogInformation("Total Leads: {Count}", result.Count);
+            
             return result;
         }
         catch (NpgsqlException)
