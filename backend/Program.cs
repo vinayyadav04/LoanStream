@@ -7,9 +7,10 @@ Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "false");
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.Sources.Clear();
-builder.Configuration.AddEnvironmentVariables();
-
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .AddEnvironmentVariables();
+    
 var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrWhiteSpace(port))
 {
