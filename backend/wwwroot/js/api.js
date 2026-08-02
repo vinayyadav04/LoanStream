@@ -8,8 +8,13 @@ const postJson = async (url, payload) => {
   });
 
   if (!response.ok) {
-    throw new Error('Request failed');
-  }
+
+    const text = await response.text();
+
+    console.error("Server Error:", text);
+
+    throw new Error(text);
+}
 
   return response.json();
 };
