@@ -20,7 +20,7 @@ public sealed class SqlLeadRepository : ILeadRepository
         _logger = logger;
     }
 
-    public async Task<int> InsertAsync(LeadRecord lead)
+    public async Task<Guid> InsertAsync(LeadRecord lead)
     {
         try
         {
@@ -43,12 +43,15 @@ public sealed class SqlLeadRepository : ILeadRepository
             command.Parameters.AddWithValue("@CreatedDate", lead.CreatedDate);
             command.Parameters.AddWithValue("@Status", lead.Status);
             var result = await command.ExecuteScalarAsync();
-            return result is int id ? id : 0;
+
+            return result is Guid id
+                ? id
+                : Guid.Empty;
         }
         catch (NpgsqlException ex)
         {
             _logger.LogError(ex, "Failed to save lead to Postgres using connection string {ConnectionString}", _connectionString);
-            return 0;
+            throw;
         }
     }
 
@@ -79,13 +82,13 @@ public sealed class SqlLeadRepository : ILeadRepository
             {
                 result.Add(new LeadRecord
                 {
-                    Id = reader.GetInt32(0),
+                    Id = reader.GetGuid(0),
                     Name = reader.GetString(1),
                     Email = reader.GetString(2),
                     Phone = reader.GetString(3),
                     EmploymentType = reader.GetString(4),
-                    MonthlyIncome = reader.GetString(5),
-                    LoanAmount = reader.GetDecimal(6),
+                    MonthlyIncome = reader.GetFloat(5),
+                    LoanAmount = reader.GetFloat(6),
                     City = reader.GetString(7),
                     Source = reader.GetString(8),
                     CreatedDate = reader.GetDateTime(9),
@@ -112,23 +115,24 @@ public sealed class SqlLeadRepository : ILeadRepository
             await using var command = connection.CreateCommand();
             command.CommandText = @"
             CREATE TABLE IF NOT EXISTS Leads (
-                Id SERIAL PRIMARY KEY,
-                Name TEXT NOT NULL,
-                Email TEXT NULL,
-                Phone TEXT NOT NULL,
-                EmploymentType TEXT NULL,
-                MonthlyIncome TEXT NULL,
-                LoanAmount DECIMAL(12,2) NOT NULL,
-                City TEXT NULL,
-                Source TEXT NULL,
-                CreatedDate TIMESTAMPTZ NOT NULL,
-                Status TEXT NOT NULL
-            );";
+            Id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            Name VARCHAR(255),
+            Email VARCHAR(255),
+            Phone VARCHAR(50),
+            EmploymentType VARCHAR(100),
+            MonthlyIncome REAL,
+            LoanAmount REAL,
+            City VARCHAR(100),
+            Source VARCHAR(100),
+            CreatedDate DATE,
+            Status VARCHAR(50)
+        );";
             await command.ExecuteNonQueryAsync();
         }
-        catch (NpgsqlException)
+        catch (Exception ex)
         {
-            // Ignore schema errors when the database is unavailable.
+            _logger.LogError(ex, "Insert failed");
+            throw;
         }
     }
 }

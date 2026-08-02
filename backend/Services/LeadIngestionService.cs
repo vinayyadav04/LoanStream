@@ -17,7 +17,6 @@ public sealed class LeadIngestionService : ILeadIngestionService
         if (string.IsNullOrWhiteSpace(request.Name) ||
             string.IsNullOrWhiteSpace(request.Phone) ||
             string.IsNullOrWhiteSpace(request.EmploymentType) ||
-            string.IsNullOrWhiteSpace(request.MonthlyIncome) ||
             string.IsNullOrWhiteSpace(request.City))
         {
             return false;
@@ -38,6 +37,6 @@ public sealed class LeadIngestionService : ILeadIngestionService
         };
 
         var insertedId = await _leadRepository.InsertAsync(lead);
-        return insertedId > 0;
+        return insertedId != Guid.Empty;
     }
 }

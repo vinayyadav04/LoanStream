@@ -23,7 +23,7 @@ public sealed class AdminService : IAdminService
         builder.AppendLine("Id,Name,Email,Phone,EmploymentType,MonthlyIncome,LoanAmount,City,Source,CreatedDate,Status");
         foreach (var lead in leads)
         {
-            builder.AppendLine($"{lead.Id},{EscapeCsv(lead.Name)},{EscapeCsv(lead.Email)},{EscapeCsv(lead.Phone)},{EscapeCsv(lead.EmploymentType)},{EscapeCsv(lead.MonthlyIncome)},{lead.LoanAmount},{EscapeCsv(lead.City)},{EscapeCsv(lead.Source)},{lead.CreatedDate:O},{EscapeCsv(lead.Status)}");
+            builder.AppendLine($"{lead.Id},{EscapeCsv(lead.Name)},{EscapeCsv(lead.Email)},{EscapeCsv(lead.Phone)},{EscapeCsv(lead.EmploymentType)},{EscapeCsv(lead.MonthlyIncome.ToString())},{lead.LoanAmount},{EscapeCsv(lead.City)},{EscapeCsv(lead.Source)},{lead.CreatedDate:O},{EscapeCsv(lead.Status)}");
         }
 
         return Encoding.UTF8.GetBytes(builder.ToString());
