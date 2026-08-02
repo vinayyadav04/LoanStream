@@ -5,11 +5,16 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.Sources.Clear();
+builder.Configuration.AddEnvironmentVariables();
+
 var port = Environment.GetEnvironmentVariable("PORT");
 if (!string.IsNullOrWhiteSpace(port))
 {
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
+
+builder.WebHost.UseSetting("linuxChmodOnStartup", "false");
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -52,17 +57,23 @@ if (app.Environment.IsDevelopment())
 var frontendRoot = Path.Combine(app.Environment.ContentRootPath, "..", "frontend");
 var adminRoot = Path.Combine(app.Environment.ContentRootPath, "..", "admin");
 
-app.UseStaticFiles(new StaticFileOptions
+if (Directory.Exists(frontendRoot))
 {
-    FileProvider = new PhysicalFileProvider(frontendRoot),
-    RequestPath = ""
-});
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(frontendRoot),
+        RequestPath = ""
+    });
+}
 
-app.UseStaticFiles(new StaticFileOptions
+if (Directory.Exists(adminRoot))
 {
-    FileProvider = new PhysicalFileProvider(adminRoot),
-    RequestPath = "/admin"
-});
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(adminRoot),
+        RequestPath = "/admin"
+    });
+}
 
 
 
@@ -71,9 +82,12 @@ app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 app.MapControllers();
 
-app.MapFallbackToFile("index.html", new StaticFileOptions
+if (Directory.Exists(frontendRoot))
 {
-    FileProvider = new PhysicalFileProvider(frontendRoot)
-});
+    app.MapFallbackToFile("index.html", new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(frontendRoot)
+    });
+}
 
 app.Run();
