@@ -1,6 +1,5 @@
 using LoanStream.Api.Data;
 using LoanStream.Api.Services;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,40 +53,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-var frontendRoot = Path.Combine(app.Environment.ContentRootPath, "..", "frontend");
-var adminRoot = Path.Combine(app.Environment.ContentRootPath, "..", "admin");
-
-if (Directory.Exists(frontendRoot))
-{
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider(frontendRoot),
-        RequestPath = ""
-    });
-}
-
-if (Directory.Exists(adminRoot))
-{
-    app.UseStaticFiles(new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider(adminRoot),
-        RequestPath = "/admin"
-    });
-}
-
-
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 app.MapGet("/thankyou", () => Results.Redirect("/thank-you"));
 app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 app.MapControllers();
-
-if (Directory.Exists(frontendRoot))
-{
-    app.MapFallbackToFile("index.html", new StaticFileOptions
-    {
-        FileProvider = new PhysicalFileProvider(frontendRoot)
-    });
-}
+app.MapFallbackToFile("index.html");
 
 app.Run();

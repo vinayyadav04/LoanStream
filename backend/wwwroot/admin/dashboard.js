@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = '';
 const fakeCredentials = { username: 'admin', password: 'admin123' };
 
 document.addEventListener('DOMContentLoaded', () => {
