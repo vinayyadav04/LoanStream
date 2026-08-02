@@ -118,14 +118,13 @@ public sealed class SqlLeadRepository : ILeadRepository
             }
 
             _logger.LogInformation("Total Leads: {Count}", result.Count);
-            
+
             return result;
         }
-        catch (NpgsqlException)
+        catch (Exception ex)
         {
-            return _fallbackLeads.Values
-                .OrderByDescending(x => x.CreatedDate)
-                .ToList();
+            _logger.LogError(ex, "GetAllAsync failed");
+            throw;
         }
     }
 
