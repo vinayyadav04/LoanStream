@@ -2,6 +2,9 @@ using LoanStream.Api.Data;
 using LoanStream.Api.Services;
 using Microsoft.Extensions.Options;
 
+Environment.SetEnvironmentVariable("DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE", "false");
+Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "false");
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.Sources.Clear();
