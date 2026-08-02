@@ -13,12 +13,31 @@ public sealed class SqlLeadRepository : ILeadRepository
     private readonly ILogger<SqlLeadRepository> _logger;
 
     public SqlLeadRepository(AppSettings settings, ILogger<SqlLeadRepository> logger)
+{
+    _logger = logger;
+
+    _connectionString = string.IsNullOrWhiteSpace(settings.DatabaseConnectionString)
+        ? settings.SqlServerConnectionString
+        : settings.DatabaseConnectionString;
+
+    _logger.LogInformation("Raw Connection String: {ConnectionString}", _connectionString);
+
+    try
     {
-        _connectionString = string.IsNullOrWhiteSpace(settings.DatabaseConnectionString)
-            ? settings.SqlServerConnectionString
-            : settings.DatabaseConnectionString;
-        _logger = logger;
+        var builder = new Npgsql.NpgsqlConnectionStringBuilder(_connectionString);
+
+        _logger.LogInformation(
+            "Host={Host}, Port={Port}, Database={Database}, Username={Username}",
+            builder.Host,
+            builder.Port,
+            builder.Database,
+            builder.Username);
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Invalid connection string format");
+    }
+}
 
     public async Task<Guid> InsertAsync(LeadRecord lead)
     {
